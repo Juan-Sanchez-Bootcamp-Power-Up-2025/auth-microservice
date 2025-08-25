@@ -2,7 +2,6 @@ package co.com.crediya.authentication.api;
 
 import co.com.crediya.authentication.api.dto.UserRequestDto;
 import co.com.crediya.authentication.api.mapper.UserMapper;
-import co.com.crediya.authentication.api.validation.ValidationException;
 import co.com.crediya.authentication.usecase.user.UserUseCase;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -31,7 +30,6 @@ public class Handler {
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
-                //.flatMap(validationHandler::validate)
                 .flatMap(dto -> {
                             Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
                             return violations.isEmpty() ? Mono.just(dto) : Mono.error(new ConstraintViolationException(violations));
