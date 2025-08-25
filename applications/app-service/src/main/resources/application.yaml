@@ -33,5 +33,5 @@ adapters:
     port: 5432
     database: "authentication"
     schema: "public"
-    username: "****"
-    password: "****"
+    username: "auth"
+    password: "auth"

@@ -13,11 +13,9 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @RequiredArgsConstructor
 public class RouterRest {
 
-    private final Handler userHandler;
-
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST("/api/v1/users"), userHandler::listenSaveUser);
+        return route(POST("/api/v1/users"), handler::listenSaveUser);
     }
 
 }

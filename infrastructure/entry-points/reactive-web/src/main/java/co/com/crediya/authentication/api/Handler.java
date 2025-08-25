@@ -1,7 +1,12 @@
 package co.com.crediya.authentication.api;
 
-import co.com.crediya.authentication.model.user.User;
+import co.com.crediya.authentication.api.dto.UserRequestDto;
+import co.com.crediya.authentication.api.mapper.UserMapper;
+import co.com.crediya.authentication.api.validation.ValidationException;
 import co.com.crediya.authentication.usecase.user.UserUseCase;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -9,18 +14,31 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
+
 @Component
 @RequiredArgsConstructor
 public class Handler {
 
     private final UserUseCase userUseCase;
 
+    private final ErrorHandler errorHandler;
+
+    private final Validator validator;
+
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(User.class)
+        return serverRequest.bodyToMono(UserRequestDto.class)
+                //.flatMap(validationHandler::validate)
+                .flatMap(dto -> {
+                            Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
+                            return violations.isEmpty() ? Mono.just(dto) : Mono.error(new ConstraintViolationException(violations));
+                        })
+                .map(UserMapper::toDomain)
                 .flatMap(userUseCase::saveUser)
                 .flatMap(savedUser -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(savedUser));
+                        .bodyValue(savedUser))
+                .onErrorResume(errorHandler::handle);
     }
 
 }

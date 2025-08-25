@@ -1,4 +1,4 @@
-package co.com.crediya.authentication.model.user.exception;
+package co.com.crediya.authentication.usecase.user.exception;
 
 public class DuplicateEmailException extends RuntimeException {
 
