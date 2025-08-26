@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class Handler {
@@ -30,6 +32,7 @@ public class Handler {
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
+                .doOnSubscribe(subscription -> log.debug(">> POST /api/v1/users - start"))
                 .flatMap(dto -> {
                             Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
                             return violations.isEmpty() ? Mono.just(dto) : Mono.error(new ConstraintViolationException(violations));
@@ -37,11 +40,14 @@ public class Handler {
                 .map(UserMapper::toDomain)
                 .flatMap(user -> tx.transactional(
                         userUseCase.saveUser(user)
+                                .doOnSuccess(userSuccess -> log.info("User registered in the database"))
+                                .doOnError(error -> log.error("User registration failed: {}", error.getMessage()))
                 ))
                 .flatMap(savedUser -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedUser))
-                .onErrorResume(errorHandler::handle);
+                .onErrorResume(errorHandler::handle)
+                .doFinally(signalType -> log.debug("<< POST /api/v1/users - end"));
     }
 
 }

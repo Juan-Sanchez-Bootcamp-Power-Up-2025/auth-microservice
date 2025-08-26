@@ -4,11 +4,13 @@ import co.com.crediya.authentication.model.user.User;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
 import co.com.crediya.authentication.r2dbc.entity.UserEntity;
 import co.com.crediya.authentication.r2dbc.helper.ReactiveAdapterOperations;
+import lombok.extern.slf4j.Slf4j;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Repository
 public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         User,
@@ -24,11 +26,13 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     @Transactional
     public Mono<User> saveUser(User user) {
+        log.debug("Saving user in the database");
         return super.save(user);
     }
 
     @Override
     public Mono<Boolean> existsByEmail(String email) {
+        log.debug("Querying the database for an email address");
         return repository.existsByEmailIgnoreCase(email);
     }
 
