@@ -3,6 +3,7 @@ package co.com.crediya.authentication.api;
 import co.com.crediya.authentication.api.dto.UserRequestDto;
 import co.com.crediya.authentication.model.user.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,7 +28,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRest {
 
     @Bean
-    @RouterOperations(
+    @RouterOperations({
             @RouterOperation(
                     path = "/api/v1/users",
                     method = RequestMethod.POST,
@@ -134,7 +135,47 @@ public class RouterRest {
                                     @ApiResponse(responseCode = "500", description = "Internal Error")
                             }
                     )
-            )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/users/validate",
+                    method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE,
+                    beanClass = Handler.class,
+                    beanMethod = "listenExistsUserByEmailAndDocumentId",
+                    operation = @Operation(
+                            operationId = "listenExistsUserByEmailAndDocumentId",
+                            summary = "Validate user",
+                            description = "Validate if a user is registered by its email and document id",
+                            parameters = {
+                                    @Parameter(
+                                            name = "email",
+                                            example = "email@crediya.com",
+                                            required = true
+                                    ),
+                                    @Parameter(
+                                            name = "documentId",
+                                            example = "12345678",
+                                            required = true
+                                    )
+                            },
+                            responses =
+                                    @ApiResponse(
+                                            responseCode = "200", description = "User is registered",
+                                            content = @Content(
+                                                    examples = {
+                                                            @ExampleObject(name = "Response example",
+                                                                    value = """
+                                                                            {
+                                                                                "valid": true
+                                                                            }
+                                                                    """,
+                                                                    description = "User example to test the registration of an user."
+                                                            )
+                                                    }
+                                            )
+                                    )
+                    )
+            )}
     )
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(GET("/api/v1/users/validate"), handler::listenExistsUserByEmailAndDocumentId)
