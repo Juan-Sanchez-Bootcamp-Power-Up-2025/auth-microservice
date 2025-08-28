@@ -17,4 +17,8 @@ public class UserUseCase {
                         : userRepository.saveUser(user));
     }
 
+    public Mono<Boolean> existsByEmailAndDocumentId(String email, String documentId) {
+        return userRepository.existsByEmailAndDocumentId(email, documentId);
+    }
+
 }

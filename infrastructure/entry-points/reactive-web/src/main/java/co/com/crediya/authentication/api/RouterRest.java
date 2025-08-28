@@ -19,6 +19,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import java.util.List;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -136,7 +137,8 @@ public class RouterRest {
             )
     )
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST("/api/v1/users"), handler::listenSaveUser);
+        return route(GET("/api/v1/users/validate"), handler::listenExistsUserByEmailAndDocumentId)
+                .andRoute(POST("/api/v1/users"), handler::listenSaveUser);
     }
 
 }

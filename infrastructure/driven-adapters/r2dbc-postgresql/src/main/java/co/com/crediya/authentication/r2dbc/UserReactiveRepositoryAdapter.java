@@ -36,4 +36,10 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         return repository.existsByEmailIgnoreCase(email);
     }
 
+    @Override
+    public Mono<Boolean> existsByEmailAndDocumentId(String email, String documentId) {
+        log.debug("Querying the database for email address and document id");
+        return repository.existsByEmailAndDocumentId(email, documentId);
+    }
+
 }

@@ -14,6 +14,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -36,11 +38,27 @@ public class Handler {
                         })
                 .map(UserMapper::toDomain)
                 .flatMap(userUseCase::saveUser)
+                .doOnSuccess(success -> log.info("User registered in the database"))
+                .doOnError(error -> log.error("User registration failed: {}", error.getMessage()))
                 .flatMap(savedUser -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedUser))
                 .onErrorResume(errorHandler::handle)
                 .doFinally(signalType -> log.debug("<< POST /api/v1/users - end"));
+    }
+
+    public Mono<ServerResponse> listenExistsUserByEmailAndDocumentId(ServerRequest serverRequest) {
+        Optional<String> email = serverRequest.queryParam("email");
+        Optional<String> documentId = serverRequest.queryParam("documentId");
+
+        return userUseCase.existsByEmailAndDocumentId(email.get(), documentId.get())
+                .doOnSubscribe(subscription -> log.debug(">> GET /api/v1/users/validate - start"))
+                .flatMap(valid -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(Map.of("valid", valid)))
+                .doOnSuccess(success -> log.info("Validation query successful"))
+                .doOnError(error -> log.error("Validation query failed: {}", error.getMessage()))
+                .doFinally(signalType -> log.debug("<< POST /api/v1/users/validate - end"));
     }
 
 }
