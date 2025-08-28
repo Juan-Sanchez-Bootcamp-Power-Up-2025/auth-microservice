@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -29,6 +30,8 @@ public class Handler {
 
     private final Validator validator;
 
+    private final TransactionalOperator transactionalOperator;
+
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
                 .doOnSubscribe(subscription -> log.debug(">> POST /api/v1/users - start"))
@@ -43,6 +46,7 @@ public class Handler {
                 .flatMap(savedUser -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedUser))
+                .as(transactionalOperator::transactional)
                 .onErrorResume(errorHandler::handle)
                 .doFinally(signalType -> log.debug("<< POST /api/v1/users - end"));
     }
@@ -56,6 +60,7 @@ public class Handler {
                 .flatMap(valid -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(Map.of("valid", valid)))
+                .as(transactionalOperator::transactional)
                 .doOnSuccess(success -> log.info("Validation query successful"))
                 .doOnError(error -> log.error("Validation query failed: {}", error.getMessage()))
                 .doFinally(signalType -> log.debug("<< POST /api/v1/users/validate - end"));
