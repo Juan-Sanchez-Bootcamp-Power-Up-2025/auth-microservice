@@ -26,6 +26,10 @@ public class UserEntity {
 
     private String email;
 
+    private String password;
+
+    private String roleId;
+
     private LocalDate birthDate;
 
     private String address;
