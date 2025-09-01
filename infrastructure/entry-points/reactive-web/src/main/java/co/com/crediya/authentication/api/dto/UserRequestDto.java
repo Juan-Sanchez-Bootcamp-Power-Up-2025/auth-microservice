@@ -13,6 +13,14 @@ public record UserRequestDto(
         @NotBlank(message = "last name is mandatory")
         String lastName,
 
+        @NotBlank(message = "email is mandatory")
+        @Email(message = "email format is not valid", regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+        String email,
+
+        String password,
+
+        String roleId,
+
         LocalDate birthDate,
 
         String address,
@@ -20,10 +28,6 @@ public record UserRequestDto(
         String documentId,
 
         String phoneNumber,
-
-        @NotBlank(message = "email is mandatory")
-        @Email(message = "email format is not valid", regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
-        String email,
 
         @NotNull(message = "salary is mandatory")
         @DecimalMin(value = "0.0", inclusive = true, message = "salary must be greater than 0")

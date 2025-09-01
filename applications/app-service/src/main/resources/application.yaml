@@ -40,5 +40,5 @@ logging:
     root: INFO
     co.com.crediya.authentication: DEBUG
 jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}
+  secret: "p7lC0O1JH0h1f1p4yQ6mJ0pP0yBz3b2g0bH0H2QyGJk="
+  expiration: 600000

@@ -1,5 +1,6 @@
 package co.com.crediya.authentication.security.jwt.provider;
 
+import co.com.crediya.authentication.security.dto.UserSecurity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,7 +24,7 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private Integer expiration;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserSecurity userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("roleId", userDetails.getAuthorities())
