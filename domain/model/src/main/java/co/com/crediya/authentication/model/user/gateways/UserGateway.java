@@ -5,8 +5,8 @@ import reactor.core.publisher.Mono;
 
 public interface UserGateway {
 
-    Mono<User> signUp(User user);
+    Mono<String> login(User user);
 
-    Mono<String> login(String email, String password);
+    boolean passwordMatches(String rawPassword, String password);
 
 }

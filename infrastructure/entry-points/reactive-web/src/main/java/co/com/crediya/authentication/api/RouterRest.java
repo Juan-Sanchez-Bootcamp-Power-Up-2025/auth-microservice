@@ -179,7 +179,6 @@ public class RouterRest {
     )
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/login"), handler::listenLogin)
-                .andRoute(POST("api/v1/signup"), handler::listenSignUp)
                 .andRoute(POST("/api/v1/users"), handler::listenSaveUser)
                 .andRoute(GET("/api/v1/users/validate"), handler::listenExistsUserByEmailAndDocumentId);
     }
