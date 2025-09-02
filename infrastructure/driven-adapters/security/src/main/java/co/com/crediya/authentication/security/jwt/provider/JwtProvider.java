@@ -1,12 +1,11 @@
 package co.com.crediya.authentication.security.jwt.provider;
 
-import co.com.crediya.authentication.security.dto.UserSecurity;
+import co.com.crediya.authentication.model.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -24,10 +23,10 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private Integer expiration;
 
-    public String generateToken(UserSecurity userDetails) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .claim("roleId", userDetails.getAuthorities())
+                .subject(user.getEmail())
+                .claim("role", user.getRoleId())
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + expiration))
                 .signWith(getKey(secret))

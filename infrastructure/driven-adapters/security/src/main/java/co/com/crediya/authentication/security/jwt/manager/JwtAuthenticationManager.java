@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -25,16 +23,10 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
                 .map(auth -> jwtProvider.getClaims(auth.getCredentials().toString()))
                 .log()
                 .onErrorResume(error -> Mono.error(new Throwable("Bad token")))
-                .map(claims -> new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(),
-                        null,
-                        Stream.of(claims.get("roleId"))
-                                .map(role -> (List<Map<String, String>>) role)
-                                .flatMap(role -> role.stream()
-                                        .map(r -> r.get("authority"))
-                                        .map(SimpleGrantedAuthority::new))
-                                .toList()
-                ));
+                .map(claims -> {
+                    var authorities = List.of(new SimpleGrantedAuthority(String.valueOf(claims.get("role"))));
+                    return new UsernamePasswordAuthenticationToken(claims.getSubject(),null, authorities);
+                });
     }
 
 }

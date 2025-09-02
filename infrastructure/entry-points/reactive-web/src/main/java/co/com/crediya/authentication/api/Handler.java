@@ -12,6 +12,7 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -39,6 +40,7 @@ public class Handler {
 
     private final TransactionalOperator transactionalOperator;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
                 .doOnSubscribe(subscription -> log.debug(">> POST /api/v1/users - start"))
@@ -58,6 +60,7 @@ public class Handler {
                 .doFinally(signalType -> log.debug("<< POST /api/v1/users - end"));
     }
 
+    @PreAuthorize("hasAuthority('CLIENT')")
     public Mono<ServerResponse> listenExistsUserByEmailAndDocumentId(ServerRequest serverRequest) {
         Optional<String> email = serverRequest.queryParam("email");
         Optional<String> documentId = serverRequest.queryParam("documentId");

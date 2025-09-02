@@ -33,7 +33,6 @@ public class SecurityReactiveAdapter implements UserGateway {
     }
 
     private String encodePassword(String password) {
-        System.out.println(passwordEncoder.encode(password));
         return passwordEncoder.encode(password);
     }
 
@@ -43,7 +42,7 @@ public class SecurityReactiveAdapter implements UserGateway {
                 .doOnSubscribe(subscription -> log.debug("Matching password"))
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .doOnSubscribe(subscription -> log.debug("Generating token"))
-                .map(user -> jwtProvider.generateToken(UserSecurityMapper.toDomain(user)))
+                .map(jwtProvider::generateToken)
                 .switchIfEmpty(Mono.error(new Throwable("Bad credentials")));
     }
 
