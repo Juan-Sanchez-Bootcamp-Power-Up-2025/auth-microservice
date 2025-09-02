@@ -15,9 +15,10 @@ public class LoginUseCase {
 
     public Mono<String> login(String email, String password) {
         return userRepository.findByEmail(email)
-                .filter(user -> userGateway.passwordMatches(password, user.getPassword()))
-                .flatMap(userGateway::login)
-                .switchIfEmpty(Mono.error(new InvalidCredentialsException()));
+                .switchIfEmpty(Mono.error(new InvalidCredentialsException()))
+                .flatMap(user -> !userGateway.passwordMatches(password, user.getPassword())
+                        ? Mono.error(new InvalidCredentialsException())
+                        : userGateway.login(user));
     }
 
 }
