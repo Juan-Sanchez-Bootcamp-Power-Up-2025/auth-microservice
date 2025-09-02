@@ -8,14 +8,24 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 public class JwtFilter implements WebFilter {
+
+    private static final List<String> WHITELIST = List.of(
+            "/login",
+            "/swagger",
+            "/webjars",
+            "/v3",
+            "/favicon.ico"
+    );
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().value();
-        if (path.contains("/login")) {
+        if (pathContains(path)) {
             return chain.filter(exchange);
         }
         String auth = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
@@ -28,6 +38,13 @@ public class JwtFilter implements WebFilter {
         String token = auth.replace("Bearer ", "");
         exchange.getAttributes().put("token", token);
         return chain.filter(exchange);
+    }
+
+    private boolean pathContains(String path) {
+        for (String pathList : WHITELIST) {
+            if (path.contains(pathList)) return true;
+        }
+        return false;
     }
 
 }
