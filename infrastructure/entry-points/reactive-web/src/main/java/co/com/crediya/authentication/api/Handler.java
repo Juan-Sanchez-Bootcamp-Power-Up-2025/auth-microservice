@@ -57,7 +57,7 @@ public class Handler {
                 .doFinally(signalType -> log.debug("<< POST /api/v1/login - end"));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CONSULTANT')")
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserRequestDto.class)
                 .doOnSubscribe(subscription -> log.debug(">> POST /api/v1/users - start"))
