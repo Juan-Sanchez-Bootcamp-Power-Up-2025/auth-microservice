@@ -1,5 +1,6 @@
 package co.com.crediya.authentication.api;
 
+import co.com.crediya.authentication.usecase.login.exception.InvalidCredentialsException;
 import co.com.crediya.authentication.usecase.user.exception.DuplicateEmailException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,9 @@ public class ErrorHandler {
             return handleConstraintViolationException(constraintViolationException);
         } else if (ex instanceof DuplicateEmailException duplicateEmailException) {
             return handleDuplicateEmailException(duplicateEmailException);
-        } else {
+        } else if (ex instanceof InvalidCredentialsException invalidCredentialsException) {
+            return handleInvalidCredentialsException(invalidCredentialsException);
+        }else {
             return handleException(ex);
         }
     }
@@ -35,6 +38,13 @@ public class ErrorHandler {
     private Mono<ServerResponse> handleDuplicateEmailException(DuplicateEmailException ex) {
         return ServerResponse.badRequest().bodyValue(Map.of(
                 "error", "Email error",
+                "violations", ex.getMessage()
+        ));
+    }
+
+    private Mono<ServerResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        return ServerResponse.badRequest().bodyValue(Map.of(
+                "error", "Credentials error",
                 "violations", ex.getMessage()
         ));
     }
