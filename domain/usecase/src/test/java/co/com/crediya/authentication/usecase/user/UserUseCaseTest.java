@@ -34,6 +34,8 @@ class UserUseCaseTest {
                 .name("Name")
                 .lastName("Lastname")
                 .email("name@email.com")
+                .password("12345678")
+                .roleId("ADMIN")
                 .birthDate(LocalDate.of(2000,1,1))
                 .address("Street 1")
                 .documentId("12354678")
@@ -75,6 +77,17 @@ class UserUseCaseTest {
         inOrder.verify(userRepository).existsByEmail(user.getEmail());
         inOrder.verify(userRepository).saveUser(user);
         inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    void shouldValidateUserByEmailAndDocumentId() {
+        User user = sampleUser();
+        when(userRepository.existsByEmailAndDocumentId(user.getEmail(), user.getDocumentId())).thenReturn(Mono.just(true));
+
+        StepVerifier.create(userUseCase.existsByEmailAndDocumentId(user.getEmail(), user.getDocumentId()))
+                .expectNextMatches(out -> out==true)
+                .expectComplete()
+                .verify();
     }
 
     @Test

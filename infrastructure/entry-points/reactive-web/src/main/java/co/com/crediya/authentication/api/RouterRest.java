@@ -1,5 +1,6 @@
 package co.com.crediya.authentication.api;
 
+import co.com.crediya.authentication.api.dto.LoginDto;
 import co.com.crediya.authentication.api.dto.UserRequestDto;
 import co.com.crediya.authentication.model.user.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +30,87 @@ public class RouterRest {
 
     @Bean
     @RouterOperations({
+            @RouterOperation(
+                    path = "/api/v1/login",
+                    method = RequestMethod.POST,
+                    produces = MediaType.APPLICATION_JSON_VALUE,
+                    beanClass = Handler.class,
+                    beanMethod = "listenLogin",
+                    operation = @Operation(
+                            operationId = "listenLogin",
+                            summary = "Log in",
+                            description = "Logs in with email and password",
+                            requestBody = @RequestBody(
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = LoginDto.class),
+                                            examples = {
+                                                    @ExampleObject(name = "Login example",
+                                                            value = """
+                                                                    {
+                                                                        "email": "email@test.com",
+                                                                        "password": "password"
+                                                                    }
+                                                                    """,
+                                                            description = "Log in example to test the authentication of an user."
+                                                    )
+                                            }
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200", description = "Log in successful",
+                                            content = @Content(schema = @Schema(implementation = User.class),
+                                                    examples = {
+                                                            @ExampleObject(name = "Login example",
+                                                                    value = """
+                                                                    {
+                                                                        "token": "eyJhbGciOiJIUzI1..."
+                                                                    }
+                                                                    """,
+                                                                    description = "Token generation."
+                                                            )
+                                                    }
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "400", description = "Invalid data",
+                                            content = @Content(schema = @Schema(implementation = List.class),
+                                                    examples = {@ExampleObject(
+                                                            name = "Credentials error",
+                                                            value = """
+                                                                    {
+                                                                         "error": "Credentials error",
+                                                                         "violations": "Invalid credentials"
+                                                                    }
+                                                            """,
+                                                            description = "Bad request for credentials."
+                                                    ), @ExampleObject(
+                                                            name = "Invalid fields",
+                                                            value = """
+                                                                    {
+                                                                        "error": "Invalid data",
+                                                                        "violations": [
+                                                                            {
+                                                                                "message": "email format is not valid",
+                                                                                "field": "email"
+                                                                            },
+                                                                            {
+                                                                                "message": "Please enter password",
+                                                                                "field": "password"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                            """,
+                                                            description = "Bad request for invalid fields."
+                                                    )}
+                                            )
+                                    ),
+                                    @ApiResponse(responseCode = "500", description = "Internal Error")
+                            }
+                    )
+            ),
             @RouterOperation(
                     path = "/api/v1/users",
                     method = RequestMethod.POST,
@@ -178,8 +260,9 @@ public class RouterRest {
             )}
     )
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(GET("/api/v1/users/validate"), handler::listenExistsUserByEmailAndDocumentId)
-                .andRoute(POST("/api/v1/users"), handler::listenSaveUser);
+        return route(POST("/api/v1/login"), handler::listenLogin)
+                .andRoute(POST("/api/v1/users"), handler::listenSaveUser)
+                .andRoute(GET("/api/v1/users/validate"), handler::listenExistsUserByEmailAndDocumentId);
     }
 
 }

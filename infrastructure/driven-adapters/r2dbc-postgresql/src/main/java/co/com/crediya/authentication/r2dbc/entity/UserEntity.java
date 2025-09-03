@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class UserEntity {
 
     @Id
-    @Column("user_id")
+    @Column("id")
     private String id;
 
     private String name;
@@ -25,6 +25,10 @@ public class UserEntity {
     private String lastName;
 
     private String email;
+
+    private String password;
+
+    private String roleId;
 
     private LocalDate birthDate;
 

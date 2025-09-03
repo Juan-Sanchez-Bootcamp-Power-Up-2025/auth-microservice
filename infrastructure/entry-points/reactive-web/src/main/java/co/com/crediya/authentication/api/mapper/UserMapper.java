@@ -11,11 +11,13 @@ public final class UserMapper {
         return User.builder()
                 .name(userRequestDto.name())
                 .lastName(userRequestDto.lastName())
+                .email(userRequestDto.email())
+                .password(userRequestDto.password())
+                .roleId(userRequestDto.roleId())
                 .birthDate(userRequestDto.birthDate())
                 .address(userRequestDto.address())
                 .documentId(userRequestDto.documentId())
                 .phoneNumber(userRequestDto.phoneNumber())
-                .email(userRequestDto.email())
                 .baseSalary(userRequestDto.baseSalary())
                 .build();
     }

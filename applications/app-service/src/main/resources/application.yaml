@@ -39,3 +39,6 @@ logging:
   level:
     root: INFO
     co.com.crediya.authentication: DEBUG
+jwt:
+  secret: "DQpKdWFuIFNhbmNoZXogQm9vdGNhbXAgUG93ZXIgVXAgMjAyNQ"
+  expiration: 600000

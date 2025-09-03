@@ -21,6 +21,10 @@ public class User {
 
     private String email;
 
+    private String password;
+
+    private String roleId;
+
     private LocalDate birthDate;
 
     private String address;
