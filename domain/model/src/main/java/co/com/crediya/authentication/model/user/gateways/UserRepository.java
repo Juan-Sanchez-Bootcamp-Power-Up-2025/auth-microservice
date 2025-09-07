@@ -9,7 +9,7 @@ public interface UserRepository {
 
     Mono<Boolean> existsByEmail(String email);
 
-    Mono<Boolean> existsByEmailAndDocumentId(String email, String documentId);
+    Mono<User> findByEmailAndDocumentId(String email, String documentId);
 
     Mono<User> findByEmail(String email);
 
