@@ -152,16 +152,18 @@ public class RouterRest {
                                                     examples = {
                                                             @ExampleObject(name = "User example",
                                                                     value = """
-                                                                    {
-                                                                        "name": "Name",
-                                                                        "lastName": "Last name",
-                                                                        "email": "email@crediya.com",
-                                                                        "birthDate": "2000-01-01",
-                                                                        "address": "Address 25 - 36",
-                                                                        "documentId": "12345678",
-                                                                        "phoneNumber": "123456",
-                                                                        "baseSalary": 12345
-                                                                    }
+                                                                        {
+                                                                             "name": "Name",
+                                                                             "lastName": "Last name",
+                                                                             "email": "name@crediya.com",
+                                                                             "password": "$2a$10$ME3rrQKvjQZk5UwoTBCdYOstqOsDHB.4Fbkm3zQQiBhMT0Z0pQ40a",
+                                                                             "roleId": "CLIENT",
+                                                                             "birthDate": "2025-03-06",
+                                                                             "address": "Street 1",
+                                                                             "documentId": "123456789",
+                                                                             "phoneNumber": "1325646",
+                                                                             "baseSalary": 1234
+                                                                         }
                                                                     """,
                                                                     description = "User example to test the registration of an user."
                                                             )
@@ -223,20 +225,15 @@ public class RouterRest {
                     method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE,
                     beanClass = Handler.class,
-                    beanMethod = "listenExistsUserByEmailAndDocumentId",
+                    beanMethod = "listenFindByDocumentId",
                     operation = @Operation(
-                            operationId = "listenExistsUserByEmailAndDocumentId",
+                            operationId = "listenFindByDocumentId",
                             summary = "Validate user",
-                            description = "Validate if a user is registered by its email and document id",
+                            description = "Validate if a user is registered by document id",
                             parameters = {
                                     @Parameter(
-                                            name = "email",
-                                            example = "email@crediya.com",
-                                            required = true
-                                    ),
-                                    @Parameter(
                                             name = "documentId",
-                                            example = "12345678",
+                                            example = "123456789",
                                             required = true
                                     )
                             },
@@ -247,9 +244,18 @@ public class RouterRest {
                                                     examples = {
                                                             @ExampleObject(name = "Response example",
                                                                     value = """
-                                                                            {
-                                                                                "valid": true
-                                                                            }
+                                                                         {
+                                                                             "name": "Name",
+                                                                             "lastName": "Last name",
+                                                                             "email": "name@crediya.com",
+                                                                             "password": "$2a$10$ME3rrQKvjQZk5UwoTBCdYOstqOsDHB.4Fbkm3zQQiBhMT0Z0pQ40a",
+                                                                             "roleId": "CLIENT",
+                                                                             "birthDate": "2025-03-06",
+                                                                             "address": "Street 1",
+                                                                             "documentId": "123456789",
+                                                                             "phoneNumber": "1325646",
+                                                                             "baseSalary": 1234
+                                                                         }
                                                                     """,
                                                                     description = "User example to test the registration of an user."
                                                             )
@@ -262,7 +268,7 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/login"), handler::listenLogin)
                 .andRoute(POST("/api/v1/users"), handler::listenSaveUser)
-                .andRoute(GET("/api/v1/users/validate"), handler::listenExistsUserByEmailAndDocumentId);
+                .andRoute(GET("/api/v1/users/validate"), handler::listenFindByDocumentId);
     }
 
 }

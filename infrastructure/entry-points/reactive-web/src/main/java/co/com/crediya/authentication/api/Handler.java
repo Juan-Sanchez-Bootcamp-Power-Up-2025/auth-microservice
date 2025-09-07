@@ -82,18 +82,18 @@ public class Handler {
     }
 
     @PreAuthorize("hasAuthority('CLIENT')")
-    public Mono<ServerResponse> listenExistsUserByEmailAndDocumentId(ServerRequest serverRequest) {
-        Optional<String> email = serverRequest.queryParam("email");
+    public Mono<ServerResponse> listenFindByDocumentId(ServerRequest serverRequest) {
         Optional<String> documentId = serverRequest.queryParam("documentId");
 
-        return userUseCase.existsByEmailAndDocumentId(email.get(), documentId.get())
+        return userUseCase.findByDocumentId(documentId.get())
                 .doOnSubscribe(subscription -> log.debug(">> GET /api/v1/users/validate - start"))
-                .flatMap(valid -> ServerResponse.ok()
+                .flatMap(user -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(Map.of("valid", valid)))
+                        .bodyValue(user))
                 .as(transactionalOperator::transactional)
                 .doOnSuccess(success -> log.info("Validation query successful"))
                 .doOnError(error -> log.error("Validation query failed: {}", error.getMessage()))
+                .onErrorResume(errorHandler::handle)
                 .doFinally(signalType -> log.debug("<< POST /api/v1/users/validate - end"));
     }
 

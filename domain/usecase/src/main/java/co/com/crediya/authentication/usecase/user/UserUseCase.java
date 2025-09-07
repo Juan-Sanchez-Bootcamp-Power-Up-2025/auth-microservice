@@ -1,5 +1,6 @@
 package co.com.crediya.authentication.usecase.user;
 
+import co.com.crediya.authentication.usecase.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import co.com.crediya.authentication.model.user.User;
 import co.com.crediya.authentication.model.user.gateways.UserRepository;
@@ -17,8 +18,9 @@ public class UserUseCase {
                         : userRepository.saveUser(user));
     }
 
-    public Mono<Boolean> existsByEmailAndDocumentId(String email, String documentId) {
-        return userRepository.existsByEmailAndDocumentId(email, documentId);
+    public Mono<User> findByDocumentId(String documentId) {
+        return userRepository.findByDocumentId(documentId)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(documentId)));
     }
 
 }
