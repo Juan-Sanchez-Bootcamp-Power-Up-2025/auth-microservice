@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
   role_id VARCHAR(15) NOT NULL,
   birth_date DATE,
   address VARCHAR(120) NOT NULL,
-  document_id VARCHAR(15) NOT NULL,
+  document_id VARCHAR(15) NOT NULL UNIQUE,
   phone_number VARCHAR(15),
   base_salary NUMERIC(15) NOT NULL,
   CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles(id)
