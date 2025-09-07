@@ -83,9 +83,10 @@ public class Handler {
 
     @PreAuthorize("hasAuthority('CLIENT')")
     public Mono<ServerResponse> listenFindByDocumentId(ServerRequest serverRequest) {
+        Optional<String> email = serverRequest.queryParam("email");
         Optional<String> documentId = serverRequest.queryParam("documentId");
 
-        return userUseCase.findByDocumentId(documentId.get())
+        return userUseCase.findByEmailAndDocumentId(email.get(), documentId.get())
                 .doOnSubscribe(subscription -> log.debug(">> GET /api/v1/users/validate - start"))
                 .flatMap(user -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)

@@ -232,6 +232,11 @@ public class RouterRest {
                             description = "Validate if a user is registered by document id",
                             parameters = {
                                     @Parameter(
+                                            name = "email",
+                                            example = "name@crediya.com",
+                                            required = true
+                                    ),
+                                    @Parameter(
                                             name = "documentId",
                                             example = "123456789",
                                             required = true

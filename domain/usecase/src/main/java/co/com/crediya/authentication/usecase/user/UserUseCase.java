@@ -18,9 +18,9 @@ public class UserUseCase {
                         : userRepository.saveUser(user));
     }
 
-    public Mono<User> findByDocumentId(String documentId) {
-        return userRepository.findByDocumentId(documentId)
-                .switchIfEmpty(Mono.error(new UserNotFoundException(documentId)));
+    public Mono<User> findByEmailAndDocumentId(String email, String documentId) {
+        return userRepository.findByEmailAndDocumentId(email, documentId)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(email, documentId)));
     }
 
 }

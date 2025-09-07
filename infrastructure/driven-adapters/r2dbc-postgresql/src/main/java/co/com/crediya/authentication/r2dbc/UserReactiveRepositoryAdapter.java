@@ -35,9 +35,9 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Mono<User> findByDocumentId(String documentId) {
-        log.debug("Querying the database for user by document id");
-        return repository.findByDocumentId(documentId);
+    public Mono<User> findByEmailAndDocumentId(String email, String documentId) {
+        log.debug("Querying the database for user by email address document id");
+        return repository.findByEmailAndDocumentId(email, documentId);
     }
 
     @Override
