@@ -1,0 +1,12 @@
+adapters:
+  r2dbc:
+    host: auth-db
+    port: 5432
+    database: authentication
+    schema: public
+    username: auth
+    password: auth
+
+jwt:
+  secret: DQpKdWFuIFNhbmNoZXogQm9vdGNhbXAgUG93ZXIgVXAgMjAyNQ
+  expiration: 3600000
