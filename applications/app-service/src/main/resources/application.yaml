@@ -20,16 +20,16 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 adapters:
   r2dbc:
-    host: "localhost"
+    host: "${DB_HOST}"
     port: 5432
-    database: "authentication"
+    database: "${DB_NAME}"
     schema: "public"
-    username: "auth"
-    password: "auth"
+    username: "${DB_USER}"
+    password: "${DB_PASS}"
 logging:
   level:
     root: INFO
     co.com.crediya.authentication: DEBUG
 jwt:
-  secret: "DQpKdWFuIFNhbmNoZXogQm9vdGNhbXAgUG93ZXIgVXAgMjAyNQ"
-  expiration: 3600000
+  secret: "${JWT_SECRET}"
+  expiration: ${JWT_EXPIRATION}
