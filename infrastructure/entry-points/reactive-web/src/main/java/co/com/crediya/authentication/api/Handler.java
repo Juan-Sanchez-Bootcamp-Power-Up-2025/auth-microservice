@@ -98,4 +98,17 @@ public class Handler {
                 .doFinally(signalType -> log.debug("<< POST /api/v1/users/validate - end"));
     }
 
+    public Mono<ServerResponse> listenFindAdminEmails(ServerRequest serverRequest) {
+        return userUseCase.findAdminEmails()
+                .doOnSubscribe(subscription -> log.debug(">> GET /api/v1/users/admin-emails - start"))
+                .flatMap(emails -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(Map.of("emails", emails)))
+                .as(transactionalOperator::transactional)
+                .doOnSuccess(success -> log.info("Admin emails retrieved successfully"))
+                .doOnError(error -> log.error("Fail getting admin emails: {}", error.getMessage()))
+                .onErrorResume(errorHandler::handle)
+                .doFinally(signalType -> log.debug("<< POST /api/v1/users/admin-emails - end"));
+    }
+
 }

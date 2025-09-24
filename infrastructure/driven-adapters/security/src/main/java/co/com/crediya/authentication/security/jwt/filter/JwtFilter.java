@@ -15,10 +15,12 @@ public class JwtFilter implements WebFilter {
 
     private static final List<String> WHITELIST = List.of(
             "/login",
+            "/users/admin-emails",
             "/swagger",
             "/webjars",
             "/v3",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/actuator"
     );
 
     @Override
