@@ -242,7 +242,7 @@ public class RouterRest {
                                             required = true
                                     )
                             },
-                            responses =
+                            responses = {
                                     @ApiResponse(
                                             responseCode = "200", description = "User is registered",
                                             content = @Content(
@@ -266,14 +266,50 @@ public class RouterRest {
                                                             )
                                                     }
                                             )
-                                    )
+                                    ),
+                                    @ApiResponse(responseCode = "500", description = "Internal Error")
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/users/admin-emails",
+                    method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE,
+                    beanClass = Handler.class,
+                    beanMethod = "listenFindAdminEmails",
+                    operation = @Operation(
+                            operationId = "listenFindAdminEmails",
+                            summary = "Admin emails",
+                            description = "Gets the emails of admin users.",
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200", description = "Admin emails",
+                                            content = @Content(
+                                                    examples = {
+                                                            @ExampleObject(name = "Response example",
+                                                                    value = """
+                                                                                 {
+                                                                                     "emails": [
+                                                                                         "admin@crediya.com",
+                                                                                         "admin2@crediya.com"
+                                                                                     ]
+                                                                                 }
+                                                                            """,
+                                                                    description = "Admin emails retrieved from the database."
+                                                            )
+                                                    }
+                                            )
+                                    ),
+                                    @ApiResponse(responseCode = "500", description = "Internal Error")
+                            }
                     )
             )}
     )
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/login"), handler::listenLogin)
                 .andRoute(POST("/api/v1/users"), handler::listenSaveUser)
-                .andRoute(GET("/api/v1/users/validate"), handler::listenFindByDocumentId);
+                .andRoute(GET("/api/v1/users/validate"), handler::listenFindByDocumentId)
+                .andRoute(GET("/api/v1/users/admin-emails"), handler::listenFindAdminEmails);
     }
 
 }

@@ -7,6 +7,8 @@ import co.com.crediya.authentication.model.user.gateways.UserRepository;
 import co.com.crediya.authentication.usecase.user.exception.DuplicateEmailException;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class UserUseCase {
 
@@ -21,6 +23,14 @@ public class UserUseCase {
     public Mono<User> findByEmailAndDocumentId(String email, String documentId) {
         return userRepository.findByEmailAndDocumentId(email, documentId)
                 .switchIfEmpty(Mono.error(new UserNotFoundException(email, documentId)));
+    }
+
+    public Mono<List<String>> findAdminEmails() {
+        return userRepository.findAdminEmails()
+                .map(String::trim)
+                .filter(email -> !email.isBlank())
+                .distinct()
+                .collectList();
     }
 
 }

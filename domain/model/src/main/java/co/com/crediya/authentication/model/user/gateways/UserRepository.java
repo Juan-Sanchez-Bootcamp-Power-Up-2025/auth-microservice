@@ -1,6 +1,7 @@
 package co.com.crediya.authentication.model.user.gateways;
 
 import co.com.crediya.authentication.model.user.User;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserRepository {
@@ -12,5 +13,7 @@ public interface UserRepository {
     Mono<User> findByEmailAndDocumentId(String email, String documentId);
 
     Mono<User> findByEmail(String email);
+
+    Flux<String> findAdminEmails();
 
 }

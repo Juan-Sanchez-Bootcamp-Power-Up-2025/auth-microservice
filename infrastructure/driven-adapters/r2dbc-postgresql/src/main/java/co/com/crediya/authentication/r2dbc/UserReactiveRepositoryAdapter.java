@@ -7,6 +7,7 @@ import co.com.crediya.authentication.r2dbc.helper.ReactiveAdapterOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -44,6 +45,12 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<User> findByEmail(String email) {
         log.debug("Querying the database for user by email address");
         return repository.findByEmail(email);
+    }
+
+    @Override
+    public Flux<String> findAdminEmails() {
+        log.debug("Querying the database for admin emails");
+        return repository.findAdminEmails();
     }
 
 }
