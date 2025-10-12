@@ -31,8 +31,9 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchangeSpec -> exchangeSpec
-                        .pathMatchers("/api/v1/login").permitAll()
-                        .pathMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/favicon.ico", "/webjars/**", "/v3/**").permitAll()
+                        .pathMatchers("/api/v1/login", "/api/v1/users/admin-emails").permitAll()
+                        .pathMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
+                                "/favicon.ico", "/webjars/**", "/v3/**", "/actuator/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .addFilterAfter(jwtFilter, SecurityWebFiltersOrder.FIRST)
